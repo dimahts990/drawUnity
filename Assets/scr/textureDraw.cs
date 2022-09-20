@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +20,7 @@ public class textureDraw : MonoBehaviour
     public Vector2 pointTouch;
     public List<Vector2> positions = new List<Vector2>();
 
-
+    
 
     private void Update()
     {
@@ -52,8 +55,39 @@ public class textureDraw : MonoBehaviour
 
         #endregion
 
-        if (Input.GetMouseButton(1 ))
+        if (Input.GetMouseButton(0))
             Draw();
+        if (Input.GetKeyDown(KeyCode.T))
+            DrawAutomat();
+    }
+
+    public async void DrawAutomat()
+    {
+        /*var data = new coordinatDraw();
+
+        await Task.Run(() =>
+        {
+            foreach (var coordinat in data.coordinats)
+            {
+                Debug.Log(coordinat);
+                DrawCircle((int) coordinat.x, (int) coordinat.y);
+                texture2D.Apply();
+                Task.Delay(1);
+            }
+        });*/
+        StartCoroutine(drawAnim());
+    }
+
+    private IEnumerator drawAnim()
+    {
+        var data = new coordinatDraw();
+        foreach (var coordinat in data.coordinats)
+        {
+            Debug.Log(coordinat);
+            DrawCircle((int) coordinat.x, (int) coordinat.y);
+            texture2D.Apply();
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     public void Draw()
@@ -84,7 +118,58 @@ public class textureDraw : MonoBehaviour
             Debug.Log($"X:{pos.x}    Y:{pos.y}");
         }
     }
-    
+
+    public void ClearCanvas()
+    {
+        #region создание текстуры
+
+        if (width != Screen.width)
+            width = Screen.width;
+        if (height != Screen.height)
+            height = Screen.height;
+
+        texture2D = new Texture2D(width, height);
+
+        texture2D.filterMode = filterMode;
+        texture2D.wrapMode = wrapMode;
+
+        material.mainTexture = texture2D;
+
+        texture2D.Apply();
+
+        if (spr == null)
+        {
+            spr = Sprite.Create(texture2D, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
+            GetComponent<Image>().sprite = spr;
+        }
+
+        #endregion
+
+        #region создание текстуры
+
+        if (width != Screen.width)
+            width = Screen.width;
+        if (height != Screen.height)
+            height = Screen.height;
+
+        texture2D = new Texture2D(width, height);
+
+        texture2D.filterMode = filterMode;
+        texture2D.wrapMode = wrapMode;
+
+        material.mainTexture = texture2D;
+
+        texture2D.Apply();
+
+        spr = Sprite.Create(texture2D, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
+        GetComponent<Image>().sprite = spr;
+
+
+        #endregion
+        
+        positions.Clear();
+    }
+
     private void DrawCircle(int rayX, int rayY)
     {
         for (int x = 0; x < sizePoint; x++)
