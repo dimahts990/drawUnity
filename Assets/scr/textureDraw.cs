@@ -56,25 +56,19 @@ public class textureDraw : MonoBehaviour
         #endregion
 
         if (Input.GetMouseButton(0))
-            Draw();
+        {
+            if(pointTouch.x != Input.mousePosition.x || pointTouch.y != Input.mousePosition.y)
+            {
+                Draw();
+                pointTouch = Input.mousePosition;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.T))
             DrawAutomat();
     }
 
-    public async void DrawAutomat()
+    private void DrawAutomat()
     {
-        /*var data = new coordinatDraw();
-
-        await Task.Run(() =>
-        {
-            foreach (var coordinat in data.coordinats)
-            {
-                Debug.Log(coordinat);
-                DrawCircle((int) coordinat.x, (int) coordinat.y);
-                texture2D.Apply();
-                Task.Delay(1);
-            }
-        });*/
         StartCoroutine(drawAnim());
     }
 
@@ -92,7 +86,6 @@ public class textureDraw : MonoBehaviour
 
     public void Draw()
     {
-        pointTouch = Input.mousePosition;
         positions.Add(new Vector2((int) pointTouch.x, (int) pointTouch.y));
 
         DrawCircle((int) pointTouch.x, (int) pointTouch.y);
@@ -185,7 +178,8 @@ public class textureDraw : MonoBehaviour
                     int pixelX = rayX + x - sizePoint / 2;
                     int pixelY = rayY + y - sizePoint / 2;
                     Color oldColor = texture2D.GetPixel(pixelX, pixelY);
-                    Color resultColor = Color.Lerp(oldColor, color, color.a);
+                    //Color resultColor = Color.Lerp(oldColor, color, color.a);
+                    Color resultColor = color;
                     texture2D.SetPixel(pixelX, pixelY, resultColor);
                 }
             }
